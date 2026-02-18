@@ -11,16 +11,8 @@ const ParticleRing = dynamic(() => import('@/components/canvas/ParticleRing'), {
 
 // Typewriter lines from PRD
 const TYPEWRITER_LINES = [
-  "Hello, I'm Nosk.",
-  'Creator of naskaus.com',
-  'I work in Business Intelligence and Operations...',
-  '20+ years building systems that actually work.',
-  'Then AI stormed humanity.',
-  'It felt like being handed superpowers.',
-  'So I started building.',
-  'And building. And building.',
-  "What you're about to see... is what happens when operations meets intelligence.",
-  'Scroll down.',
+  '"Don\'t believe everything you read on the internet"',
+  '— Abraham Lincoln',
 ];
 
 interface Section0AwakeningProps {

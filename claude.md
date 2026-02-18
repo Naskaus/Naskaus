@@ -1,140 +1,129 @@
-# CLAUDE.md — naskaus.com Project Instructions
+# CLAUDE.md
 
-## MANDATORY: Read at EVERY session start
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-At the beginning of EVERY Claude Code session working on this project, you MUST:
+## Session Start Protocol
 
-1. **Read `PROMPT_PRD.md`** — This is the complete Product Requirements Document.
-   It contains all design specs, component specs, data, auth rules, and constraints.
-   `cat PROMPT_PRD.md` — Read it entirely. Do not skip sections.
+1. Read `PROMPT_PRD.md` — the complete product requirements document (design specs, component specs, data, auth rules, constraints)
+2. Read `CHECKPOINT.md` — shows which phases are complete and what was last tested
+3. Announce: "PRD loaded. Checkpoint: [last phase]. Ready for Phase [next]."
+4. Never assume context from prior sessions — the files are the source of truth
 
-2. **Read `CHECKPOINT.md`** (if it exists) — Shows which phases are complete and
-   what was last tested. Never redo completed phases.
+## Commands
 
-3. **Announce your state**: Before any work, say:
-   "✅ PRD loaded. Checkpoint: [last phase]. Ready for Phase [next]."
-
-4. **Never assume context from conversation history** — Always re-read the files.
-   The files are the truth. Conversation may be incomplete or from a previous session.
-
-## Key constraints (quick reference):
-- Stack: Next.js 14 + TypeScript + Tailwind + GSAP + Canvas 2D
-- Particles: Canvas 2D ring system (2px particles — NOT large blobs)
-- Three.js: ONLY for Digital Shadow Matrix rain shader
-- Font: Bebas Neue for NASKAUS. title (MASSIVE size)
-- Cursor: Circle (28px, 2px stroke) + inner dot (6px solid)
-- Auth: JWT httpOnly cookies, proxy through Next.js API routes
-- DO NOT touch: staff.naskaus.com backend, any sub-site, PostgreSQL DB
-- Phases: Build → npm run dev → write CHECKPOINT.md → wait for approval
-
-## Project location: C:\Users\sebab\Coding\Rasberry\Naskaus2.0
-## Local URL: http://localhost:3000
-## Production: https://naskaus.com (via Cloudflare tunnel)
-
-## Quick Commands
 ```bash
-npm install      # Install dependencies
-npm run dev      # Development server
-npm run build    # Production build
-npm start        # Start production server
-npx tsc --noEmit # Type check
+npm run dev          # Start dev server at http://localhost:3000
+npm run build        # Production build (must pass with zero errors before deploy)
+npm run start        # Run production build
+npm run lint         # ESLint
 ```
 
-## File Structure (Phase 2 Complete)
-```
-src/
-├── app/
-│   ├── layout.tsx          # Root layout with fonts
-│   ├── page.tsx            # Landing page with all sections
-│   └── globals.css         # Design system tokens + animations
-├── components/
-│   ├── canvas/
-│   │   └── ParticleRing.tsx    # Canvas 2D particle system (crisp 2px)
-│   ├── sections/
-│   │   ├── Section0Awakening.tsx   # Hero with particles + typewriter
-│   │   ├── Section0_5IconWave.tsx  # Tech stack marquee (real SVG logos)
-│   │   └── Section1Lab.tsx         # Lab section with app showcase
-│   └── ui/
-│       ├── AppBall.tsx         # App showcase cards
-│       ├── CursorFollower.tsx  # Custom cursor (ring + dot)
-│       ├── Navbar.tsx          # Top navigation
-│       ├── ScrollDots.tsx      # Section navigation dots
-│       ├── SectionCard.tsx     # Frosted glass cards with orbiting dots
-│       └── TypewriterText.tsx  # Typing effect with typo simulation
-├── data/
-│   └── apps.ts             # LAB_APPS, SHADOW_NODES, AI_TOOLS registries
-├── hooks/
-│   ├── useScrollSection.ts # Scroll progress tracking
-│   └── useTypewriter.ts    # Typewriter hook
-└── lib/
-    ├── api.ts              # API client setup
-    ├── gsap.ts             # GSAP + ScrollTrigger registration
-    └── mulberry32.ts       # Seeded PRNG for deterministic particles
+Production deployment (Raspberry Pi 5):
+```bash
+pm2 start npm --name "naskaus" -- start
+pm2 save
 ```
 
-## Technical Notes
+## Architecture
 
-### Particle System (ParticleRing.tsx)
-- **CRITICAL:** Use `fillRect()` NOT `arc()` for crisp particles
-- Always round coords: `Math.round(p.x)`, `Math.round(p.y)`
-- Disable smoothing: `ctx.imageSmoothingEnabled = false`
-- Uses mulberry32 PRNG for deterministic spawning
+This is a scroll-driven immersive portfolio site built with **Next.js 14 App Router**, **TypeScript strict**, **Tailwind CSS**, **GSAP 3 + ScrollTrigger**, and **Canvas 2D** particle systems.
 
-### TypewriterText
-- Uses setTimeout chain with isCancelled flag (NOT setInterval)
-- Includes typo simulation with backspace correction
-- Speed params: minCharDelay=28, maxCharDelay=70, linePause=420
+### Scroll-as-Trigger Architecture (Critical Pattern)
 
-### Icon Wave (Section0_5IconWave.tsx)
-- Real SVG logos in monochrome (#9AB8A7 grey-green)
-- CSS-only marquee + sinusoidal wave animation (±50px)
-- 12 icons: Next.js, Python, Docker, FastAPI, Cloudflare, Claude, PostgreSQL, React, GSAP, Tailwind, Gemini, Canvas
+Sections use **trigger-based** animations, NOT scrub-based. ScrollTrigger pins sections but animations are **autonomous GSAP timelines** that fire once on scroll entry and play to completion regardless of scroll direction. This is the core architecture decision — do not revert to scrub-based.
 
-### Lab Section (Section1Lab.tsx)
-- ScrollTrigger pinned (200vh scroll distance)
-- 4 apps revealed on scroll: Marifah, Meet Beyond, Aperi Pommes, PantiesFan
-- Progress-based reveals at 15%, 35%, 55%, 75% scroll progress
+```typescript
+// The pattern used in ALL sections (Lab, Arena, Shadow, AI Tools):
+const tl = gsap.timeline({ paused: true });
+// ... build timeline with absolute time offsets ...
 
-### Dynamic Imports
-- All browser-dependent components use `dynamic()` with `ssr: false`
-- Prevents hydration mismatches with canvas/window APIs
-
-## Design Tokens
-```css
---bg-hero: #080808
---bg-lab: #0A0A0F
---accent-green: #00F5A0
---lab-amber: #FF9500
---arena-blue: #00D4FF
---shadow-green: #00FF41
---ai-gold: #FFD700
+ScrollTrigger.create({
+  trigger: section,
+  start: 'top top',
+  end: '+=300%',     // pin duration
+  pin: true,
+  onUpdate: (self) => {
+    if (!hasPlayedRef.current && self.progress > 0) {
+      hasPlayedRef.current = true;
+      tl.play();     // fire once, plays autonomously
+    }
+  },
+});
 ```
 
-## Phase Progress
+Key rules:
+- **Zero React state changes in scroll handlers** — use refs + direct DOM manipulation
+- **No exit animations** — sections scroll away naturally (like the hero)
+- **Fire-and-forget** — once triggered, animation completes regardless of scroll
+- Pin durations: Lab 300%, Arena 280%, Shadow 320%, AI Tools 200%
 
-- [x] **Phase 1:** Foundation + Hero (particles, typewriter, cursor)
-- [x] **Phase 2:** Scroll Engine + Lab + Icon Wave
-- [ ] **Phase 3:** Arena + Shadow + Auth
-- [ ] **Phase 4:** AI Tools + Finale + Section Pages
-- [ ] **Phase 5:** Admin Panel + Polish
-- [ ] **Phase 6:** Production Deployment
+### Cinematic Title System
 
-## Next Phase (3) Requirements
-- Section2Arena with The4th game showcase
-- Section3Shadow with Matrix rain (Three.js GLSL shader)
-- MatrixRain.tsx shader component
-- Login modal and auth system
-- Zustand auth store
-- Next.js API proxy routes to staff.naskaus.com
+All sections use `SectionTitle` component with `.section-title-cinematic` CSS class. Color schemes: `amber` (Lab), `blue-violet` (Arena), `green` (Shadow), `blue-gold` (AI Tools), `white` (default). Titles always appear first in the animation timeline before any content.
 
----
+### Particle Systems (Canvas 2D)
 
-## Session Log: February 2026
+Five particle systems, all following the same pattern (mulberry32 PRNG, delta-time, HiDPI, RAF loop):
 
-**Phase 2 Complete.** All features working:
-- Hero: crisp particles + elastic letter fly-in + typewriter (1.4x speed)
-- Icon Wave: 12 real SVG logos in monochrome, sinusoidal wave animation
-- Lab: ScrollTrigger pinned section, 4 app balls with scroll-triggered reveals
-- Placeholder sections: Arena, Shadow, AI Tools, Finale
+| Component | Section | Behavior | Seed |
+|-----------|---------|----------|------|
+| `ParticleRing.tsx` | Hero | Antigravity ring, cursor repulsion | — |
+| `LabConstellation.tsx` | Lab | Amber dots + connections, cursor attraction | 77701 |
+| `ArenaParticles.tsx` | Arena | PlayStation shapes (cross/square/triangle/circle), cursor repulsion | 33333 |
+| `ConstellationCanvas.tsx` | AI Tools | Blue+gold dots + connections, cursor attraction | 44444 |
+| Star field (inline) | Finale | Twinkling white dots | 99999 |
 
-Ready for Phase 3 on next session.
+Three.js is used ONLY for `MatrixRain.tsx` (Digital Shadow GLSL shader).
+
+### Auth System
+
+JWT httpOnly cookies proxied through Next.js API routes to FastAPI backend at `staff.naskaus.com`. Three roles: GUEST (public), USER (unlocks some Shadow nodes), ADMIN (full access). Auth state managed via Zustand store (`useAuthStore`).
+
+Dev-mode bypass (development only): `admin@naskaus.dev` / `admin` in login route, `dev-admin-token` recognized in me route.
+
+### Routes
+
+| Route | Type | Description |
+|-------|------|-------------|
+| `/` | Landing (scroll) | Full immersive scroll: Hero → Icon Wave → Lab → Arena → Shadow → AI Tools → Finale |
+| `/lab` | Section page | Lab apps card grid with LabConstellation particles |
+| `/arena` | Section page | The4th hero card with ArenaParticles |
+| `/shadow` | Section page | Matrix rain + auth-aware node grid |
+| `/ai-tools` | Section page | AI tool cards with ConstellationCanvas |
+
+### Component Conventions
+
+- All interactive/animated components use `'use client'`
+- Canvas and browser-API components are dynamically imported with `{ ssr: false }`
+- SSR guards: `if (typeof window === 'undefined') return` or `isMounted` state pattern
+- `forwardRef` used on components that receive GSAP animation refs (SectionTitle)
+- Section pages share: ambient particles, back arrow (top-left), Navbar with `showAfterDelay={0}`, CursorFollower, LoginModal
+
+### Design System
+
+- **Fonts:** Bebas Neue (hero/section titles, MASSIVE), Outfit (headings), DM Sans (body), JetBrains Mono (code/terminal) — all preloaded via Google Fonts CDN in `layout.tsx`
+- **Colors:** CSS custom properties in `globals.css` (`--accent: #00F5A0`, `--lab-amber: #FF9500`, `--arena-blue: #00D4FF`, `--shadow-green: #00FF41`, `--ai-blue: #0066FF`, `--ai-gold: #FFD700`)
+- **Typography:** Always `clamp()` for responsive sizing, never fixed px for display text
+- **Custom cursor:** 28px ring + 6px dot, accent color, lerp 0.15 lag, scales on hover over `.interactive`/`<a>`/`<button>`
+
+### Data
+
+`src/data/apps.ts` is the single source of truth for `LAB_APPS`, `SHADOW_NODES`, and `AI_TOOLS` registries with TypeScript interfaces (`LabApp`, `ShadowNode`, `AITool`).
+
+## Hard Boundaries
+
+- Do NOT modify the FastAPI backend (`staff.naskaus.com`)
+- Do NOT modify the PostgreSQL database schema
+- Do NOT touch any sub-site codebase (marifah, meetbeyond, aperipommes, pantiesfan, the4th, agency, tasks, etc.)
+- Do NOT use Three.js anywhere except the Matrix rain shader in Digital Shadow
+- Do NOT use tsparticles — use Canvas 2D with the mulberry32 PRNG pattern
+- Do NOT use scrub-based scroll animations — use trigger-based (fire-once) timelines
+- Do NOT use React state in scroll handlers — use refs + direct DOM manipulation
+- `overflow-x: hidden` on html, body, and every section wrapper — no horizontal scroll at any viewport
+
+## Phase Workflow
+
+Work is divided into 6 phases. After completing a phase: run `npm run build` (must pass zero errors), update `CHECKPOINT.md` with test URLs and a visual feature checklist, then stop and wait for Nosk's explicit approval before proceeding.
+
+**Completed:** Phase 1 (Foundation + Hero), Phase 2 (Scroll + Lab + Icon Wave), Phase 3 (Arena + Shadow + Auth + Cinematic Redesign), Phase 4 (AI Tools + Finale + Section Pages)
+**Next:** Phase 5 (Admin Panel + Polish)

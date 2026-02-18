@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { useAuthStore } from '@/store/useAuthStore';
 
 // Dynamic imports to avoid SSR issues with browser APIs
 const CursorFollower = dynamic(() => import('@/components/ui/CursorFollower'), {
@@ -11,6 +12,9 @@ const Navbar = dynamic(() => import('@/components/ui/Navbar'), {
   ssr: false,
 });
 const ScrollDots = dynamic(() => import('@/components/ui/ScrollDots'), {
+  ssr: false,
+});
+const LoginModal = dynamic(() => import('@/components/ui/LoginModal'), {
   ssr: false,
 });
 const Section0Awakening = dynamic(
@@ -23,6 +27,22 @@ const Section0_5IconWave = dynamic(
 );
 const Section1Lab = dynamic(
   () => import('@/components/sections/Section1Lab'),
+  { ssr: false }
+);
+const Section2Arena = dynamic(
+  () => import('@/components/sections/Section2Arena'),
+  { ssr: false }
+);
+const Section3Shadow = dynamic(
+  () => import('@/components/sections/Section3Shadow'),
+  { ssr: false }
+);
+const Section4AITools = dynamic(
+  () => import('@/components/sections/Section4AITools'),
+  { ssr: false }
+);
+const Section5Finale = dynamic(
+  () => import('@/components/sections/Section5Finale'),
   { ssr: false }
 );
 
@@ -41,9 +61,13 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
 
+  const fetchMe = useAuthStore((s) => s.fetchMe);
+
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    // Hydrate auth state on mount
+    fetchMe();
+  }, [fetchMe]);
 
   // Track scroll position to update active section
   useEffect(() => {
@@ -53,24 +77,24 @@ export default function Home() {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
 
-      // Simple section detection based on scroll position
+      // Section detection — account for pinned sections
       const heroEnd = windowHeight;
       const iconWaveEnd = heroEnd + windowHeight * 0.6;
-      const labEnd = iconWaveEnd + windowHeight * 3; // Lab is pinned for 200vh
-      const arenaStart = labEnd;
-      const shadowStart = arenaStart + windowHeight;
-      const aiToolsStart = shadowStart + windowHeight;
-      const finaleStart = aiToolsStart + windowHeight;
+      const labEnd = iconWaveEnd + windowHeight * 4; // Lab pinned for 300%
+      const arenaEnd = labEnd + windowHeight * 3.8; // Arena pinned for 280%
+      const shadowEnd = arenaEnd + windowHeight * 4.2; // Shadow pinned for 320%
+      const aiToolsEnd = shadowEnd + windowHeight * 3; // AI Tools pinned for 200%
+      const finaleStart = aiToolsEnd;
 
       if (scrollY < heroEnd) {
         setActiveSection(0);
       } else if (scrollY < labEnd) {
         setActiveSection(1);
-      } else if (scrollY < shadowStart) {
+      } else if (scrollY < arenaEnd) {
         setActiveSection(2);
-      } else if (scrollY < aiToolsStart) {
+      } else if (scrollY < shadowEnd) {
         setActiveSection(3);
-      } else if (scrollY < finaleStart) {
+      } else if (scrollY < aiToolsEnd) {
         setActiveSection(4);
       } else {
         setActiveSection(5);
@@ -101,6 +125,9 @@ export default function Home() {
       {/* Scroll Dots - right edge */}
       <ScrollDots sections={SECTIONS} activeSection={activeSection} />
 
+      {/* Login Modal */}
+      <LoginModal />
+
       {/* Section 0: The Awakening / Hero */}
       <div id="hero">
         <Section0Awakening onAnimationComplete={() => setHeroComplete(true)} />
@@ -112,72 +139,17 @@ export default function Home() {
       {/* Section 1: The Lab */}
       <Section1Lab />
 
-      {/* Placeholder sections for scroll - will be built in Phase 3+ */}
-      <section
-        id="arena"
-        className="relative w-full h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--bg-arena)' }}
-      >
-        <div className="text-center">
-          <span className="section-label" style={{ color: 'var(--arena-blue)' }}>
-            GAME ARENA
-          </span>
-          <p className="text-muted font-mono text-sm mt-4">
-            [Coming in Phase 3]
-          </p>
-        </div>
-      </section>
+      {/* Section 2: Game Arena */}
+      <Section2Arena />
 
-      <section
-        id="shadow"
-        className="relative w-full h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--bg-shadow)' }}
-      >
-        <div className="text-center">
-          <span className="section-label" style={{ color: 'var(--shadow-green)' }}>
-            DIGITAL SHADOW
-          </span>
-          <p className="text-muted font-mono text-sm mt-4">
-            [Coming in Phase 3]
-          </p>
-        </div>
-      </section>
+      {/* Section 3: Digital Shadow */}
+      <Section3Shadow />
 
-      <section
-        id="ai-tools"
-        className="relative w-full h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--bg-ai)' }}
-      >
-        <div className="text-center">
-          <span className="section-label" style={{ color: 'var(--ai-blue)' }}>
-            AI TOOLS
-          </span>
-          <p className="text-muted font-mono text-sm mt-4" style={{ color: '#333' }}>
-            [Coming in Phase 4]
-          </p>
-        </div>
-      </section>
+      {/* Section 4: AI Tools */}
+      <Section4AITools />
 
-      <section
-        id="finale"
-        className="relative w-full h-screen flex items-center justify-center"
-        style={{
-          background:
-            'linear-gradient(180deg, #000000 0%, #0a0a1a 50%, #0d0d20 100%)',
-        }}
-      >
-        <div className="text-center">
-          <h2 className="font-display text-6xl md:text-8xl text-white mb-4">
-            NASKAUS.
-          </h2>
-          <p className="text-muted font-body text-lg">
-            Built by one. Powered by many.
-          </p>
-          <p className="text-muted font-mono text-sm mt-8">
-            [Full Finale coming in Phase 4]
-          </p>
-        </div>
-      </section>
+      {/* Section 5: Finale */}
+      <Section5Finale />
     </main>
   );
 }

@@ -405,3 +405,133 @@ body {
 .btn-primary:active {
   transform: translateY(0);
 }
+
+/* ========== CINEMATIC TITLE SYSTEM ========== */
+
+.section-title-cinematic {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 12vw, 10rem);
+  letter-spacing: 0.08em;
+  line-height: 0.9;
+  text-transform: uppercase;
+  position: relative;
+  display: inline-block;
+}
+
+/* Amber shimmer gradient (The Lab) */
+@keyframes gradient-shift-amber {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.section-title-cinematic.title-amber {
+  background: linear-gradient(90deg, #FF9500, #FFCC00, #FF6B00, #FF9500);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift-amber 6s ease infinite;
+}
+
+/* Chromatic split (Game Arena) */
+.section-title-cinematic.title-chromatic {
+  color: #ffffff;
+  position: relative;
+}
+
+.section-title-cinematic.title-chromatic::before,
+.section-title-cinematic.title-chromatic::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.section-title-cinematic.title-chromatic::before {
+  color: var(--arena-blue);
+  animation: chromatic-oscillate-left 3s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+.section-title-cinematic.title-chromatic::after {
+  color: var(--arena-violet);
+  animation: chromatic-oscillate-right 3s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+@keyframes chromatic-oscillate-left {
+  0%, 100% { transform: translate(-2px, 0); }
+  50% { transform: translate(-1px, 0); }
+}
+
+@keyframes chromatic-oscillate-right {
+  0%, 100% { transform: translate(2px, 0); }
+  50% { transform: translate(1px, 0); }
+}
+
+/* Terminal green glow (Digital Shadow) */
+@keyframes terminal-glow {
+  0%, 100% { filter: brightness(1.0); text-shadow: 0 0 10px rgba(0,255,65,0.6), 0 0 20px rgba(0,255,65,0.3); }
+  50% { filter: brightness(0.85); text-shadow: 0 0 6px rgba(0,255,65,0.4), 0 0 12px rgba(0,255,65,0.2); }
+}
+
+@keyframes terminal-glitch {
+  0%, 90%, 100% { transform: translate(0, 0) skewX(0deg); opacity: 1; }
+  92% { transform: translate(-3px, 1px) skewX(-2deg); opacity: 0.8; }
+  94% { transform: translate(2px, -1px) skewX(1deg); opacity: 0.9; }
+  96% { transform: translate(-1px, 2px) skewX(-1deg); opacity: 0.85; }
+  98% { transform: translate(1px, -1px) skewX(0.5deg); opacity: 0.95; }
+}
+
+.section-title-cinematic.title-terminal {
+  color: var(--shadow-green);
+  animation: terminal-glow 2s ease-in-out infinite, terminal-glitch 8s step-end infinite;
+  text-shadow: 0 0 10px rgba(0,255,65,0.6), 0 0 20px rgba(0,255,65,0.3);
+}
+
+/* Blue-gold gradient (AI Tools) */
+@keyframes gradient-shift-blue-gold {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.section-title-cinematic.title-blue-gold {
+  background: linear-gradient(90deg, #0066FF, #FFD700, #0066FF, #FFD700);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift-blue-gold 6s ease infinite;
+}
+
+/* Nucleus pulse glow (Finale) */
+@keyframes nucleus-pulse {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(255,255,255,0.4), 0 0 40px rgba(0,245,160,0.3), 0 0 80px rgba(0,245,160,0.1);
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(255,255,255,0.6), 0 0 60px rgba(0,245,160,0.5), 0 0 100px rgba(0,245,160,0.2);
+  }
+}
+
+.nucleus-glow {
+  animation: nucleus-pulse 3s ease-in-out infinite;
+}
+
+/* AI Tools card (light theme) */
+.ai-tool-card {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ai-tool-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+}

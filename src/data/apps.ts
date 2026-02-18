@@ -12,6 +12,7 @@ export interface LabApp {
   url: string;
   accessLevel: 'guest' | 'user' | 'admin';
   badge?: string;
+  image: string;
 }
 
 export interface ShadowNode {
@@ -33,6 +34,7 @@ export const LAB_APPS: LabApp[] = [
     color: '#4ADE80',
     url: 'https://marifah.naskaus.com',
     accessLevel: 'guest',
+    image: '/images/marifah.jpg',
   },
   {
     id: 'meetbeyond',
@@ -42,6 +44,7 @@ export const LAB_APPS: LabApp[] = [
     color: '#FF6B6B',
     url: 'https://meetbeyond.naskaus.com',
     accessLevel: 'guest',
+    image: '/images/meetbeyond.jpg',
   },
   {
     id: 'aperipommes',
@@ -51,6 +54,7 @@ export const LAB_APPS: LabApp[] = [
     color: '#8B5E3C',
     url: 'https://aperipommes.naskaus.com',
     accessLevel: 'guest',
+    image: '/images/aperipommes.jpg',
   },
   {
     id: 'pantiesfan',
@@ -61,6 +65,7 @@ export const LAB_APPS: LabApp[] = [
     url: 'https://pantiesfan.com',
     accessLevel: 'guest',
     badge: '18+',
+    image: '/images/pantiesfan.jpg',
   },
 ];
 
@@ -118,44 +123,59 @@ export const SHADOW_NODES: ShadowNode[] = [
 ];
 
 // AI Tools data for Phase 4
-export const AI_TOOLS = [
+export interface AITool {
+  id: string;
+  name: string;
+  maker: string;
+  desc: string;
+  url: string;
+}
+
+export const AI_TOOLS: AITool[] = [
   {
+    id: 'claude',
     name: 'Claude / Anthropic Console',
     maker: 'Anthropic',
     desc: 'The AI backbone of all Naskaus apps',
     url: 'https://console.anthropic.com',
   },
   {
+    id: 'claude-code',
     name: 'Claude Code',
     maker: 'Anthropic',
     desc: 'Agentic AI coding in the terminal',
     url: 'https://claude.ai/code',
   },
   {
+    id: 'antigravity',
     name: 'Google Antigravity',
     maker: 'Google',
     desc: 'Next-gen development IDE',
     url: 'https://antigravity.google',
   },
   {
+    id: 'ai-studio',
     name: 'Google AI Studio',
     maker: 'Google',
     desc: 'Rapid prototyping with Gemini',
     url: 'https://aistudio.google.com',
   },
   {
+    id: 'stitch',
     name: 'Google Stitch',
     maker: 'Google',
     desc: 'AI-powered design-to-code',
     url: 'https://stitch.withgoogle.com',
   },
   {
+    id: 'gemini',
     name: 'Gemini',
     maker: 'Google',
     desc: 'Multimodal AI assistant',
     url: 'https://gemini.google.com',
   },
   {
+    id: 'flow',
     name: 'Google Flow (Veo 3.1)',
     maker: 'Google Labs',
     desc: 'AI video and image generation',

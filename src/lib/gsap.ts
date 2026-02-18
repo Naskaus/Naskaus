@@ -38,3 +38,10 @@ export const SCROLL_DEFAULTS = {
   pin: true,
   anticipatePin: 1,
 } as const;
+
+// Title-first scroll protocol — fixed 15% budget in every section
+export const TITLE_FIRST = {
+  fadeIn: 0.08,
+  hold: 0.12,
+  reposition: 0.15,
+} as const;
