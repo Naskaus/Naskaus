@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const backendRes = await fetch(`${BACKEND_URL}/auth/me`, {
+    const backendRes = await fetch(`${BACKEND_URL}/api/auth/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -31,9 +31,18 @@ export async function GET(req: NextRequest) {
 
     const data = await backendRes.json();
 
+    // Backend returns { id, username, email, role, is_active, created_at }
+    // Frontend expects { user: { id, email, name, role } }
+    const user = {
+      id: String(data.id),
+      email: data.email,
+      name: data.username,
+      role: data.role?.toLowerCase() === 'admin' ? 'admin' : 'user',
+    };
+
     return NextResponse.json({
-      user: data.user ?? data,
-      role: data.role ?? data.user?.role,
+      user,
+      role: user.role,
     });
   } catch {
     return NextResponse.json({ error: 'Auth check failed' }, { status: 500 });

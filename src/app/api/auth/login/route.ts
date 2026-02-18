@@ -22,10 +22,11 @@ export async function POST(req: NextRequest) {
       return response;
     }
 
-    const backendRes = await fetch(`${BACKEND_URL}/auth/login`, {
+    // Backend expects { username, password } — send email as username
+    const backendRes = await fetch(`${BACKEND_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ username: email, password }),
     });
 
     if (!backendRes.ok) {
@@ -36,14 +37,34 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await backendRes.json();
+    const token = data.access_token;
+
+    // Fetch user info using the token
+    const meRes = await fetch(`${BACKEND_URL}/api/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    let user = null;
+    if (meRes.ok) {
+      const meData = await meRes.json();
+      user = {
+        id: String(meData.id),
+        email: meData.email,
+        name: meData.username,
+        role: meData.role?.toLowerCase() === 'admin' ? 'admin' : 'user',
+      };
+    }
 
     const response = NextResponse.json({
-      user: data.user,
-      role: data.role ?? data.user?.role,
+      user,
+      role: user?.role,
     });
 
     // Set httpOnly cookie with the JWT token
-    response.cookies.set('naskaus_token', data.token ?? data.access_token, {
+    response.cookies.set('naskaus_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

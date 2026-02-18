@@ -110,16 +110,32 @@ Dev-mode bypass (development only): `admin@naskaus.dev` / `admin` in login route
 
 `src/data/apps.ts` is the single source of truth for `LAB_APPS`, `SHADOW_NODES`, and `AI_TOOLS` registries with TypeScript interfaces (`LabApp`, `ShadowNode`, `AITool`).
 
-## Hard Boundaries
+## Production Deployment
 
-- Do NOT modify the FastAPI backend (`staff.naskaus.com`)
-- Do NOT modify the PostgreSQL database schema
-- Do NOT touch any sub-site codebase (marifah, meetbeyond, aperipommes, pantiesfan, the4th, agency, tasks, etc.)
-- Do NOT use Three.js anywhere except the Matrix rain shader in Digital Shadow
-- Do NOT use tsparticles — use Canvas 2D with the mulberry32 PRNG pattern
-- Do NOT use scrub-based scroll animations — use trigger-based (fire-once) timelines
-- Do NOT use React state in scroll handlers — use refs + direct DOM manipulation
-- `overflow-x: hidden` on html, body, and every section wrapper — no horizontal scroll at any viewport
+Raspberry Pi 5 via Tailscale (`seb@100.119.245.18`):
+- Site: `https://naskaus.com` (Cloudflare tunnel → port 3000)
+- Deploy path: `/var/www/naskaus/`
+- Process: PM2 (`pm2 start naskaus`)
+- Auth backend: FastAPI at `staff.naskaus.com` (port 8001), routes at `/api/auth/*`
+- DB: `digital_shadow` PostgreSQL, users in `app_users` table
+- Users: `seb` (ADMIN), `viewer` (VIEWER), `admin` (ADMIN), `mint` (ADMIN)
+
+### Auth Proxy (Critical)
+
+Next.js API routes proxy to the backend. Key mappings:
+- Frontend sends `{ email, password }` → proxy converts to `{ username: email, password }` for backend
+- Backend URL prefix is `/api` (e.g., `${BACKEND_URL}/api/auth/login`, not `/auth/login`)
+- Backend `ADMIN`/`VIEWER` roles normalize to `admin`/`user` for frontend
+- Token stored as `naskaus_token` httpOnly cookie
+
+### Deploy Process
+
+```bash
+npm run build                          # local validation
+tar -czf deploy.tar.gz --exclude=node_modules --exclude=.next --exclude=.git --exclude=.env.local -C Naskaus2.0 .
+scp deploy.tar.gz seb@100.119.245.18:~/
+ssh seb@100.119.245.18                 # then: pm2 stop naskaus, extract, npm install, npm run build, pm2 start naskaus
+```
 
 ## Phase Workflow
 
