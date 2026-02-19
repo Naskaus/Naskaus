@@ -1,14 +1,62 @@
 # CHECKPOINT.md — naskaus.com Phase Progress
 
-## Current Status: PHASE 4 COMPLETE
+## Current Status: POST-PHASE 4 POLISH COMPLETE
 
-**Date:** February 2026
-**Phase:** 4 — AI Tools + Finale + Section Pages
-**Status:** Ready for testing
+**Date:** 2026-02-19
+**Phase:** Post-Phase 4 — UX fixes, mobile responsive, visual upgrades
+**Status:** Pushed to main, awaiting mobile testing
 
 ---
 
-## What Was Built This Phase
+## Post-Phase 4 Polish (5 commits on main)
+
+### Commit `a99cb11` — UX Bug Fixes
+- Fixed duplicate navbar (removed SSR placeholder, unified into single Navbar with showAfterDelay)
+- Sped up section transitions (~12% faster timelines)
+- Fixed z-index hierarchy (cursor > modal > navbar > mobile menu > sections)
+- Made Lab cards fully clickable (whole card opens URL, not just CTA)
+
+### Commit `9d637d0` — Lab Title Positioning
+- THE LAB title now sits above cards (absolute top-[10vh]) instead of overlapping them
+- Title animation: starts centered (y: 40vh offset), fades in, slides up to final position
+
+### Commit `e0fcccb` — Card Sizes + Hover Fix + Badge Orbit + AI Tools Title
+- Reduced Lab card sizes (aspect 2/1, tighter padding)
+- Fixed hover glitch: replaced CSS transition-transform with GSAP-only transforms (`gsap.set` for mousemove, `gsap.to` with `overwrite: 'auto'` for mouseleave)
+- Created BadgeOrbitCeremony (8 tech badges gather → orbit → scatter in Finale)
+- Fixed AI Tools title overlap (absolute top-[8vh], grid mt-[20vh])
+
+### Commit `68fa164` — Full Mobile Responsive Pass
+- Font sizes: lowered clamp() minimums for hero, typewriter, section titles
+- Scroll progress hidden on mobile
+- Section5Finale: responsive orbit container, scaled radii
+- BadgeOrbitCeremony: viewport-scaled radii and scatter distances
+- Section0Awakening: scaled letter scatter, responsive scroll indicator
+- Section0_5IconWave: shorter height, smaller gaps
+- Section2Arena/3Shadow/4AITools: progressive gap scaling
+- Section1Lab: responsive mt and gap
+- LabCard: touch device detection, disabled 3D tilt on no-hover devices
+
+### Commit `2230a66` — Lab Mobile Fix + Atom Orbit
+- Lab grid: changed from `grid-cols-1 md:grid-cols-2` to `grid-cols-2` (always 2 columns)
+- Lab cards: hidden tech tags + CTA on mobile, smaller text/padding/badge, line-clamp-2
+- Replaced BadgeOrbitCeremony with AtomOrbit canvas animation:
+  - 3 orbital rings at 0°, 60°, 120° tilt
+  - Each ring carries 1 glowing electron (green, cyan, gold)
+  - 400ms fading trails along orbital path
+  - Ring paths visible as thin ghost lines
+  - Depth illusion: 0.6x opacity/scale behind, 1.0x in front
+  - Nucleus radial glow pulse at center
+  - Same trigger mechanism preserved (forwardRef + play())
+
+### Shelved: Dark/Light Mode Toggle
+- Comprehensive plan exists at `.claude/plans/distributed-brewing-hummingbird.md`
+- 27-step implementation covering: CSS variable system, cinematic 3s overlay, particle color tweening, animated toggle button
+- NOT implemented — deferred for later
+
+---
+
+## What Was Built in Phase 4
 
 ### Section 4: AI Tools (Landing Page)
 - [x] `Section4AITools.tsx` — 7 AI tool cards on light background
@@ -196,6 +244,7 @@ src/
 │       ├── Navbar.tsx
 │       ├── ScrollDots.tsx
 │       ├── SectionCard.tsx
+│       ├── AtomOrbit.tsx            # NEW (replaced BadgeOrbitCeremony)
 │       ├── SectionTitle.tsx         # UPDATED
 │       └── TypewriterText.tsx
 ├── data/
@@ -213,14 +262,14 @@ src/
 
 ---
 
-## Next Phase: Phase 5 — Admin Panel + Polish
+## Pending / Future Work
 
-Will add:
-- `/admin` page with UserTable, UserFormModal, SystemInfo
-- Admin API proxy routes (GET/POST/PUT/DELETE users)
-- Next.js middleware for admin role gate
-- Polish: all animations reviewed, mobile tested, FPS monitor, GPU detection, prefers-reduced-motion
+- **Dark/Light Mode Toggle** — Full plan shelved (see `.claude/plans/distributed-brewing-hummingbird.md`)
+- **Admin Panel** — `/admin` page with UserTable, UserFormModal, SystemInfo
+- **Admin API proxy routes** — GET/POST/PUT/DELETE users
+- **Next.js middleware** — admin role gate
+- **Final polish** — FPS monitor, GPU detection, prefers-reduced-motion audit
 
 ---
 
-**Phase 4 complete. Awaiting Nosk's review and approval to proceed to Phase 5.**
+**Post-Phase 4 polish complete. Commit `2230a66` pushed to main. Awaiting Nosk's mobile testing.**
