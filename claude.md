@@ -2,38 +2,33 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Session Start Protocol
+## Key Reference Files
 
-1. Read `PROMPT_PRD.md` — the complete product requirements document (design specs, component specs, data, auth rules, constraints)
-2. Read `CHECKPOINT.md` — shows which phases are complete and what was last tested
-3. Announce: "PRD loaded. Checkpoint: [last phase]. Ready for Phase [next]."
-4. Never assume context from prior sessions — the files are the source of truth
+- `PROMPT_PRD.md` — Complete product requirements (design specs, component specs, data, auth rules, constraints). Read before any major work.
+- `CHECKPOINT.md` — Current phase status and what was last tested. Check before starting work.
 
 ## Commands
 
 ```bash
 npm run dev          # Start dev server at http://localhost:3000
-npm run build        # Production build (must pass with zero errors before deploy)
+npm run build        # Production build (TypeScript strict — must pass with zero errors)
 npm run start        # Run production build
-npm run lint         # ESLint
+npm run lint         # ESLint (Next.js config)
 ```
 
-Production deployment (Raspberry Pi 5):
-```bash
-pm2 start npm --name "naskaus" -- start
-pm2 save
-```
+No test framework is configured yet.
 
 ## Architecture
 
-This is a scroll-driven immersive portfolio site built with **Next.js 14 App Router**, **TypeScript strict**, **Tailwind CSS**, **GSAP 3 + ScrollTrigger**, and **Canvas 2D** particle systems.
+Next.js 14 App Router + TypeScript strict + Tailwind CSS + GSAP 3 + Canvas 2D particle systems. Scroll-driven immersive portfolio site.
+
+Path alias: `@/*` maps to `./src/*` (configured in `tsconfig.json`).
 
 ### Scroll-as-Trigger Architecture (Critical Pattern)
 
 Sections use **trigger-based** animations, NOT scrub-based. ScrollTrigger pins sections but animations are **autonomous GSAP timelines** that fire once on scroll entry and play to completion regardless of scroll direction. This is the core architecture decision — do not revert to scrub-based.
 
 ```typescript
-// The pattern used in ALL sections (Lab, Arena, Shadow, AI Tools):
 const tl = gsap.timeline({ paused: true });
 // ... build timeline with absolute time offsets ...
 
@@ -53,7 +48,7 @@ ScrollTrigger.create({
 
 Key rules:
 - **Zero React state changes in scroll handlers** — use refs + direct DOM manipulation
-- **No exit animations** — sections scroll away naturally (like the hero)
+- **No exit animations** — sections scroll away naturally
 - **Fire-and-forget** — once triggered, animation completes regardless of scroll
 - Pin durations: Lab 300%, Arena 280%, Shadow 320%, AI Tools 200%
 
@@ -75,11 +70,20 @@ Five particle systems, all following the same pattern (mulberry32 PRNG, delta-ti
 
 Three.js is used ONLY for `MatrixRain.tsx` (Digital Shadow GLSL shader).
 
+Canvas specs: `desynchronized: true`, DPR scaling (`width = rect.width * dpr`), particle count scales with viewport (`base * (viewport / 1920)`).
+
 ### Auth System
 
 JWT httpOnly cookies proxied through Next.js API routes to FastAPI backend at `staff.naskaus.com`. Three roles: GUEST (public), USER (unlocks some Shadow nodes), ADMIN (full access). Auth state managed via Zustand store (`useAuthStore`).
 
 Dev-mode bypass (development only): `admin@naskaus.dev` / `admin` in login route, `dev-admin-token` recognized in me route.
+
+### Auth Proxy Details
+
+- Frontend sends `{ email, password }` → proxy converts to `{ username: email, password }` for backend
+- Backend URL prefix is `/api` (e.g., `${BACKEND_URL}/api/auth/login`, not `/auth/login`)
+- Backend `ADMIN`/`VIEWER` roles normalize to `admin`/`user` for frontend
+- Token stored as `naskaus_token` httpOnly cookie
 
 ### Routes
 
@@ -97,7 +101,13 @@ Dev-mode bypass (development only): `admin@naskaus.dev` / `admin` in login route
 - Canvas and browser-API components are dynamically imported with `{ ssr: false }`
 - SSR guards: `if (typeof window === 'undefined') return` or `isMounted` state pattern
 - `forwardRef` used on components that receive GSAP animation refs (SectionTitle)
+- GSAP cleanup: always use `gsap.context()` with `.revert()` in useEffect cleanup
+- Three.js cleanup: dispose geometry, material, and renderer
 - Section pages share: ambient particles, back arrow (top-left), Navbar with `showAfterDelay={0}`, CursorFollower, LoginModal
+
+### Data
+
+`src/data/apps.ts` is the single source of truth for `LAB_APPS`, `SHADOW_NODES`, and `AI_TOOLS` registries with TypeScript interfaces (`LabApp`, `ShadowNode`, `AITool`).
 
 ### Design System
 
@@ -106,9 +116,11 @@ Dev-mode bypass (development only): `admin@naskaus.dev` / `admin` in login route
 - **Typography:** Always `clamp()` for responsive sizing, never fixed px for display text
 - **Custom cursor:** 28px ring + 6px dot, accent color, lerp 0.15 lag, scales on hover over `.interactive`/`<a>`/`<button>`
 
-### Data
+## Hard Boundaries
 
-`src/data/apps.ts` is the single source of truth for `LAB_APPS`, `SHADOW_NODES`, and `AI_TOOLS` registries with TypeScript interfaces (`LabApp`, `ShadowNode`, `AITool`).
+- DO NOT modify FastAPI backend (`staff.naskaus.com`) or PostgreSQL schema
+- DO NOT touch sub-site codebases (marifah, meetbeyond, aperipommes, pantiesfan, the4th, agency, tasks, etc.)
+- Tech stack is locked — see `PROMPT_PRD.md` for the full list
 
 ## Production Deployment
 
@@ -116,19 +128,6 @@ Raspberry Pi 5 via Tailscale (`seb@100.119.245.18`):
 - Site: `https://naskaus.com` (Cloudflare tunnel → port 3000)
 - Deploy path: `/var/www/naskaus/`
 - Process: PM2 (`pm2 start naskaus`)
-- Auth backend: FastAPI at `staff.naskaus.com` (port 8001), routes at `/api/auth/*`
-- DB: `digital_shadow` PostgreSQL, users in `app_users` table
-- Users: `seb` (ADMIN), `viewer` (VIEWER), `admin` (ADMIN), `mint` (ADMIN)
-
-### Auth Proxy (Critical)
-
-Next.js API routes proxy to the backend. Key mappings:
-- Frontend sends `{ email, password }` → proxy converts to `{ username: email, password }` for backend
-- Backend URL prefix is `/api` (e.g., `${BACKEND_URL}/api/auth/login`, not `/auth/login`)
-- Backend `ADMIN`/`VIEWER` roles normalize to `admin`/`user` for frontend
-- Token stored as `naskaus_token` httpOnly cookie
-
-### Deploy Process
 
 ```bash
 npm run build                          # local validation
@@ -139,7 +138,4 @@ ssh seb@100.119.245.18                 # then: pm2 stop naskaus, extract, npm in
 
 ## Phase Workflow
 
-Work is divided into 6 phases. After completing a phase: run `npm run build` (must pass zero errors), update `CHECKPOINT.md` with test URLs and a visual feature checklist, then stop and wait for Nosk's explicit approval before proceeding.
-
-**Completed:** Phase 1 (Foundation + Hero), Phase 2 (Scroll + Lab + Icon Wave), Phase 3 (Arena + Shadow + Auth + Cinematic Redesign), Phase 4 (AI Tools + Finale + Section Pages)
-**Next:** Phase 5 (Admin Panel + Polish)
+Work is divided into phases. After completing a phase: run `npm run build` (must pass zero errors), update `CHECKPOINT.md` with test URLs and a visual feature checklist, then stop and wait for Nosk's explicit approval before proceeding. Check `CHECKPOINT.md` for current phase status.

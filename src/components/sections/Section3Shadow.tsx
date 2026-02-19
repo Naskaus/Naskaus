@@ -153,17 +153,24 @@ export default function Section3Shadow() {
     const lastNode = 2.15 + (nodes.length - 1) * 0.22 + 0.52;
     tl.call(() => { startNodeFloats(nodes); startDataFlicker(nodes); }, [], lastNode + 0.05);
 
-    // --- ScrollTrigger ---
+    // --- ScrollTrigger: pin + fade out ---
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: section,
         start: 'top top',
-        end: '+=320%',
+        end: '+=130%',
         pin: true,
         onUpdate: (self) => {
           if (!hasPlayedRef.current && self.progress > 0) {
             hasPlayedRef.current = true;
             tl.play();
+          }
+          // Fade out in the last 20% of pin
+          if (self.progress > 0.8) {
+            const fade = 1 - (self.progress - 0.8) / 0.2;
+            section.style.opacity = String(fade);
+          } else {
+            section.style.opacity = '1';
           }
         },
       });

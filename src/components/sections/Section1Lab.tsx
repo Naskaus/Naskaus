@@ -105,17 +105,24 @@ export default function Section1Lab() {
     const lastCard = 1.3 + (cards.length - 1) * 0.26 + 0.78;
     tl.call(() => startFloatAnimations(cards), [], lastCard + 0.05);
 
-    // --- ScrollTrigger: pin + trigger once ---
+    // --- ScrollTrigger: pin + trigger once + fade out ---
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: section,
         start: 'top top',
-        end: '+=300%',
+        end: '+=120%',
         pin: true,
         onUpdate: (self) => {
           if (!hasPlayedRef.current && self.progress > 0) {
             hasPlayedRef.current = true;
             tl.play();
+          }
+          // Fade out in the last 20% of pin
+          if (self.progress > 0.8) {
+            const fade = 1 - (self.progress - 0.8) / 0.2;
+            section.style.opacity = String(fade);
+          } else {
+            section.style.opacity = '1';
           }
         },
       });
@@ -171,7 +178,7 @@ export default function Section1Lab() {
         {/* Title — starts centered, moves above card grid, z-20 to stay on top */}
         <div
           ref={titleWrapRef}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-20 pointer-events-none"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-30 pointer-events-none"
         >
           <SectionTitle ref={titleRef} text="THE LAB" colorScheme="amber" />
           <div

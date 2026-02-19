@@ -95,17 +95,24 @@ export default function Section4AITools() {
     const lastCard = 1.0 + (cards.length - 1) * 0.1 + 0.6;
     tl.call(() => startFloats(cards), [], lastCard + 0.05);
 
-    // ScrollTrigger
+    // ScrollTrigger: pin + fade out
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: section,
         start: 'top top',
-        end: '+=200%',
+        end: '+=100%',
         pin: true,
         onUpdate: (self) => {
           if (!hasPlayedRef.current && self.progress > 0) {
             hasPlayedRef.current = true;
             tl.play();
+          }
+          // Fade out in the last 20% of pin
+          if (self.progress > 0.8) {
+            const fade = 1 - (self.progress - 0.8) / 0.2;
+            section.style.opacity = String(fade);
+          } else {
+            section.style.opacity = '1';
           }
         },
       });

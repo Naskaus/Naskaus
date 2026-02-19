@@ -80,10 +80,10 @@ export default function Home() {
       // Section detection — account for pinned sections
       const heroEnd = windowHeight;
       const iconWaveEnd = heroEnd + windowHeight * 0.6;
-      const labEnd = iconWaveEnd + windowHeight * 4; // Lab pinned for 300%
-      const arenaEnd = labEnd + windowHeight * 3.8; // Arena pinned for 280%
-      const shadowEnd = arenaEnd + windowHeight * 4.2; // Shadow pinned for 320%
-      const aiToolsEnd = shadowEnd + windowHeight * 3; // AI Tools pinned for 200%
+      const labEnd = iconWaveEnd + windowHeight * 2.2; // Lab pinned for 120%
+      const arenaEnd = labEnd + windowHeight * 2.1; // Arena pinned for 110%
+      const shadowEnd = arenaEnd + windowHeight * 2.3; // Shadow pinned for 130%
+      const aiToolsEnd = shadowEnd + windowHeight * 2; // AI Tools pinned for 100%
       const finaleStart = aiToolsEnd;
 
       if (scrollY < heroEnd) {

@@ -58,7 +58,9 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
         border: `1px solid ${app.color}30`,
         boxShadow: `0 4px 30px rgba(0,0,0,0.4)`,
         willChange: 'transform',
+        cursor: 'pointer',
       }}
+      onClick={handleVisit}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
@@ -134,21 +136,13 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
         </div>
 
         {/* CTA */}
-        <button
-          onClick={handleVisit}
-          className="group flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-300 interactive"
+        <div
+          className="group flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-300"
           style={{
             background: `${app.color}20`,
             color: app.color,
             border: `1px solid ${app.color}40`,
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background = app.color;
-            (e.currentTarget as HTMLButtonElement).style.color = '#000';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background = `${app.color}20`;
-            (e.currentTarget as HTMLButtonElement).style.color = app.color;
+            pointerEvents: 'none',
           }}
         >
           VISIT APP
@@ -165,7 +159,7 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
               d="M17 8l4 4m0 0l-4 4m4-4H3"
             />
           </svg>
-        </button>
+        </div>
       </div>
 
       {/* Hover edge glow */}

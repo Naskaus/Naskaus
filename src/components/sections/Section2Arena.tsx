@@ -100,17 +100,24 @@ export default function Section2Arena() {
     const settled = 2.3 + (subCards.length - 1) * 0.26 + 0.7;
     tl.call(() => startFloatAnimations(mainCard, subCards), [], settled + 0.05);
 
-    // --- ScrollTrigger ---
+    // --- ScrollTrigger: pin + fade out ---
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: section,
         start: 'top top',
-        end: '+=280%',
+        end: '+=110%',
         pin: true,
         onUpdate: (self) => {
           if (!hasPlayedRef.current && self.progress > 0) {
             hasPlayedRef.current = true;
             tl.play();
+          }
+          // Fade out in the last 20% of pin
+          if (self.progress > 0.8) {
+            const fade = 1 - (self.progress - 0.8) / 0.2;
+            section.style.opacity = String(fade);
+          } else {
+            section.style.opacity = '1';
           }
         },
       });

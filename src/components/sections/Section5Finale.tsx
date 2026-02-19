@@ -273,21 +273,8 @@ export default function Section5Finale() {
           Built by one. Powered by many.
         </p>
 
-        {/* Section links + CTA */}
+        {/* CTA */}
         <div ref={linksRef} className="mt-10 flex flex-col items-center gap-6" style={{ opacity: 0 }}>
-          <div className="flex flex-wrap justify-center gap-6">
-            {ORBIT_CARDS.map((card) => (
-              <a
-                key={card.label}
-                href={card.href}
-                className="font-heading text-sm tracking-widest transition-colors duration-300 interactive"
-                style={{ color: card.color }}
-              >
-                {card.label}
-              </a>
-            ))}
-          </div>
-
           <a
             href="mailto:nosk@naskaus.com"
             className="mt-2 px-6 py-3 rounded-lg font-body text-sm font-semibold tracking-wider uppercase transition-all duration-300 interactive"
