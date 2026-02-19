@@ -3,8 +3,8 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { mulberry32, seededRandom } from '@/lib/mulberry32';
-import BadgeOrbitCeremony from '@/components/ui/BadgeOrbitCeremony';
-import type { BadgeOrbitHandle } from '@/components/ui/BadgeOrbitCeremony';
+import AtomOrbit from '@/components/ui/AtomOrbit';
+import type { AtomOrbitHandle } from '@/components/ui/AtomOrbit';
 
 const ORBIT_CARDS = [
   { label: 'THE LAB', color: '#FF9500', href: '#lab' },
@@ -38,7 +38,7 @@ export default function Section5Finale() {
   const elapsedRef = useRef<number>(0);
   const hasPlayedRef = useRef(false);
   const orbitAnimRef = useRef<gsap.core.Tween | null>(null);
-  const ceremonyRef = useRef<BadgeOrbitHandle>(null);
+  const ceremonyRef = useRef<AtomOrbitHandle>(null);
 
   const initStars = useCallback((width: number, height: number) => {
     const rng = mulberry32(STAR_SEED);
@@ -253,8 +253,8 @@ export default function Section5Finale() {
             NASKAUS.
           </h2>
 
-          {/* Badge orbit ceremony (inner ring) */}
-          <BadgeOrbitCeremony ref={ceremonyRef} />
+          {/* Atom orbit (inner ring) */}
+          <AtomOrbit ref={ceremonyRef} />
 
           {/* Orbit cards */}
           {ORBIT_CARDS.map((card, i) => (

@@ -94,7 +94,7 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
 
         {/* Gradient overlay on image bottom */}
         <div
-          className="absolute inset-x-0 bottom-0 h-16 pointer-events-none"
+          className="absolute inset-x-0 bottom-0 h-8 sm:h-16 pointer-events-none"
           style={{
             background: 'linear-gradient(transparent, rgba(0,0,0,0.6))',
           }}
@@ -103,7 +103,7 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
         {/* Badge */}
         {app.badge && (
           <div
-            className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-bold z-20"
+            className="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold z-20"
             style={{
               background: app.color,
               color: 'white',
@@ -116,22 +116,22 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
       </div>
 
       {/* Content panel */}
-      <div className="relative z-20 px-3 py-2 md:px-4 md:py-3">
+      <div className="relative z-20 px-2 py-1 sm:px-3 sm:py-2 md:px-4 md:py-3">
         {/* App name */}
         <h4
-          className="font-heading text-base md:text-lg font-semibold mb-0.5"
+          className="font-heading text-sm sm:text-base md:text-lg font-semibold mb-0.5"
           style={{ color: app.color }}
         >
           {app.name}
         </h4>
 
         {/* Description */}
-        <p className="text-xs md:text-sm mb-1.5 leading-snug" style={{ color: 'var(--text-secondary)' }}>
+        <p className="text-[11px] sm:text-xs md:text-sm mb-1 sm:mb-1.5 leading-snug line-clamp-2 sm:line-clamp-none" style={{ color: 'var(--text-secondary)' }}>
           {app.desc}
         </p>
 
-        {/* Tech tags */}
-        <div className="flex flex-wrap gap-1 mb-2">
+        {/* Tech tags — hidden on mobile */}
+        <div className="hidden sm:flex flex-wrap gap-1 mb-2">
           {app.techTags.map((tag) => (
             <span
               key={tag}
@@ -147,9 +147,9 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
           ))}
         </div>
 
-        {/* CTA */}
+        {/* CTA — hidden on mobile */}
         <div
-          className="group flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-300"
+          className="hidden sm:flex group items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-300"
           style={{
             background: `${app.color}20`,
             color: app.color,
