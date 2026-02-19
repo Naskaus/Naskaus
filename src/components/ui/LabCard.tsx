@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useCallback } from 'react';
+import { gsap } from '@/lib/gsap';
 import type { LabApp } from '@/data/apps';
 
 interface LabCardProps {
@@ -27,7 +28,7 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
     const rotateY = ((x - centerX) / centerX) * 8;
     const rotateX = ((centerY - y) / centerY) * 8;
 
-    card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-12px) scale(1.02)`;
+    gsap.set(card, { rotateX, rotateY, y: -12, scale: 1.02, transformPerspective: 800 });
 
     // Move glow to cursor position
     glow.style.opacity = '1';
@@ -39,7 +40,7 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
     const glow = glowRef.current;
     if (!card || !glow) return;
 
-    card.style.transform = '';
+    gsap.to(card, { rotateX: 0, rotateY: 0, y: 0, scale: 1, transformPerspective: 800, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
     glow.style.opacity = '0';
   }, []);
 
@@ -50,7 +51,7 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
   return (
     <div
       ref={cardRef}
-      className={`relative rounded-2xl overflow-hidden transition-transform duration-300 ease-out interactive ${className}`}
+      className={`relative rounded-2xl overflow-hidden interactive ${className}`}
       style={{
         background: 'rgba(0,0,0,0.5)',
         backdropFilter: 'blur(12px)',
@@ -72,7 +73,7 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
       />
 
       {/* Screenshot */}
-      <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
+      <div className="relative w-full overflow-hidden" style={{ aspectRatio: '2/1' }}>
         <img
           src={app.image}
           alt={`${app.name} screenshot`}
@@ -104,22 +105,22 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
       </div>
 
       {/* Content panel */}
-      <div className="relative z-20 px-4 py-3 md:px-5 md:py-4">
+      <div className="relative z-20 px-3 py-2 md:px-4 md:py-3">
         {/* App name */}
         <h4
-          className="font-heading text-base md:text-lg font-semibold mb-1"
+          className="font-heading text-base md:text-lg font-semibold mb-0.5"
           style={{ color: app.color }}
         >
           {app.name}
         </h4>
 
         {/* Description */}
-        <p className="text-xs md:text-sm mb-2.5 leading-snug" style={{ color: 'var(--text-secondary)' }}>
+        <p className="text-xs md:text-sm mb-1.5 leading-snug" style={{ color: 'var(--text-secondary)' }}>
           {app.desc}
         </p>
 
         {/* Tech tags */}
-        <div className="flex flex-wrap gap-1 mb-3">
+        <div className="flex flex-wrap gap-1 mb-2">
           {app.techTags.map((tag) => (
             <span
               key={tag}
@@ -137,7 +138,7 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
 
         {/* CTA */}
         <div
-          className="group flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-300"
+          className="group flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-300"
           style={{
             background: `${app.color}20`,
             color: app.color,

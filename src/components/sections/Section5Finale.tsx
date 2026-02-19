@@ -3,6 +3,8 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { mulberry32, seededRandom } from '@/lib/mulberry32';
+import BadgeOrbitCeremony from '@/components/ui/BadgeOrbitCeremony';
+import type { BadgeOrbitHandle } from '@/components/ui/BadgeOrbitCeremony';
 
 const ORBIT_CARDS = [
   { label: 'THE LAB', color: '#FF9500', href: '#lab' },
@@ -36,6 +38,7 @@ export default function Section5Finale() {
   const elapsedRef = useRef<number>(0);
   const hasPlayedRef = useRef(false);
   const orbitAnimRef = useRef<gsap.core.Tween | null>(null);
+  const ceremonyRef = useRef<BadgeOrbitHandle>(null);
 
   const initStars = useCallback((width: number, height: number) => {
     const rng = mulberry32(STAR_SEED);
@@ -147,6 +150,9 @@ export default function Section5Finale() {
     const orbitStart = 0.8 + (orbitCards.length - 1) * 0.15 + 0.6;
     tl.call(() => startOrbit(orbitCards), [], orbitStart + 0.05);
 
+    // Badge orbit ceremony (inner ring of tech badges)
+    tl.call(() => ceremonyRef.current?.play(), [], orbitStart + 0.3);
+
     // Tagline
     tl.to(tagline, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, orbitStart + 0.2);
 
@@ -245,6 +251,9 @@ export default function Section5Finale() {
           >
             NASKAUS.
           </h2>
+
+          {/* Badge orbit ceremony (inner ring) */}
+          <BadgeOrbitCeremony ref={ceremonyRef} />
 
           {/* Orbit cards */}
           {ORBIT_CARDS.map((card, i) => (

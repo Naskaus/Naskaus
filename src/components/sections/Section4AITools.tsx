@@ -153,14 +153,14 @@ export default function Section4AITools() {
         <ConstellationCanvas opacity={0.6} />
       </div>
 
-      <div className="relative w-full h-full flex flex-col items-center justify-center z-10 px-4">
+      <div className="relative w-full h-full flex flex-col items-center z-10 px-4">
         {/* Title */}
-        <div className="absolute top-16 md:top-20 left-1/2 -translate-x-1/2">
+        <div className="absolute top-[8vh] left-1/2 -translate-x-1/2 z-30 pointer-events-none">
           <SectionTitle ref={titleRef} text="AI TOOLS" colorScheme="blue-gold" />
         </div>
 
         {/* Card grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-4xl mt-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-4xl mt-[20vh]">
           {AI_TOOLS.map((tool, i) => (
             <div
               key={tool.id}
