@@ -63,6 +63,8 @@ export default function Section1Lab() {
     const cards = cardRefs.current.filter(Boolean) as HTMLDivElement[];
 
     // --- Initial states ---
+    // Title wrapper starts pushed down to center of viewport (40vh below its top-[10vh] position)
+    gsap.set(titleWrap, { y: '40vh' });
     gsap.set(title, { opacity: 0, y: 60, scale: 0.92 });
     gsap.set(subtitle, { opacity: 0, y: 20 });
     gsap.set(particleWrap, { opacity: 0 });
@@ -79,11 +81,11 @@ export default function Section1Lab() {
     // --- Autonomous timeline (~3.5s, ~12% faster) ---
     const tl = gsap.timeline({ paused: true });
 
-    // Title fades up center-screen
+    // Title fades in at center-screen
     tl.to(title, { opacity: 1, y: 0, scale: 1, duration: 0.85, ease: 'power2.out' }, 0);
 
-    // Title moves to top, above card grid
-    tl.to(titleWrap, { y: '-30vh', duration: 0.7, ease: 'power2.inOut' }, 0.85);
+    // Title slides up to its natural top position (y: 0 = top-[10vh])
+    tl.to(titleWrap, { y: 0, duration: 0.7, ease: 'power2.inOut' }, 0.85);
 
     // Subtitle
     tl.to(subtitle, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, 1.0);
@@ -174,11 +176,11 @@ export default function Section1Lab() {
         }}
       />
 
-      <div className="relative w-full h-full flex flex-col items-center justify-center z-10">
-        {/* Title — starts centered, moves above card grid, z-20 to stay on top */}
+      <div className="relative w-full h-full flex flex-col items-center z-10">
+        {/* Title — starts centered, animates to top */}
         <div
           ref={titleWrapRef}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-30 pointer-events-none"
+          className="absolute top-[10vh] left-1/2 -translate-x-1/2 flex flex-col items-center z-30 pointer-events-none"
         >
           <SectionTitle ref={titleRef} text="THE LAB" colorScheme="amber" />
           <div
@@ -190,9 +192,9 @@ export default function Section1Lab() {
           </div>
         </div>
 
-        {/* Card Grid */}
+        {/* Card Grid — positioned below title area */}
         <div
-          className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 px-4 md:px-8 w-full max-w-3xl mt-24 z-10"
+          className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 px-4 md:px-8 w-full max-w-3xl z-10 mt-[32vh]"
           style={{ perspective: '1200px' }}
         >
           {LAB_APPS.map((app, index) => (
