@@ -12,8 +12,18 @@ interface LabCardProps {
 export default function LabCard({ app, className = '' }: LabCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
+  const isTouchRef = useRef(false);
+
+  // Detect touch device once on first interaction
+  const checkTouch = useCallback(() => {
+    if (typeof window !== 'undefined' && !isTouchRef.current) {
+      isTouchRef.current = !window.matchMedia('(hover: hover)').matches;
+    }
+  }, []);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    checkTouch();
+    if (isTouchRef.current) return; // Skip 3D tilt on touch devices
     const card = cardRef.current;
     const glow = glowRef.current;
     if (!card || !glow) return;
@@ -36,6 +46,7 @@ export default function LabCard({ app, className = '' }: LabCardProps) {
   }, [app.color]);
 
   const handleMouseLeave = useCallback(() => {
+    if (isTouchRef.current) return;
     const card = cardRef.current;
     const glow = glowRef.current;
     if (!card || !glow) return;

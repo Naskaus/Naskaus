@@ -183,7 +183,8 @@ export default function Section5Finale() {
   }, [handleResize, animateCanvas]);
 
   function startOrbit(cards: HTMLDivElement[]) {
-    const radii = [140, 160, 180, 200];
+    const scale = Math.min(1, window.innerWidth / 768);
+    const radii = [140, 160, 180, 200].map(r => r * scale);
     const speeds = [12, 16, 20, 14];
     const startAngles = [0, Math.PI * 0.5, Math.PI, Math.PI * 1.5];
 
@@ -239,7 +240,7 @@ export default function Section5Finale() {
 
       <div className="relative w-full h-full flex flex-col items-center justify-center z-10">
         {/* Orbit zone */}
-        <div className="relative" style={{ width: '400px', height: '200px' }}>
+        <div className="relative w-[280px] h-[140px] md:w-[400px] md:h-[200px]">
           {/* Nucleus title */}
           <h2
             ref={titleRef}
@@ -276,14 +277,14 @@ export default function Section5Finale() {
         {/* Tagline */}
         <p
           ref={taglineRef}
-          className="font-body text-lg md:text-xl mt-12"
+          className="font-body text-base md:text-xl mt-8 md:mt-12"
           style={{ color: 'var(--muted)', opacity: 0 }}
         >
           Built by one. Powered by many.
         </p>
 
         {/* CTA */}
-        <div ref={linksRef} className="mt-10 flex flex-col items-center gap-6" style={{ opacity: 0 }}>
+        <div ref={linksRef} className="mt-6 md:mt-10 flex flex-col items-center gap-4 md:gap-6" style={{ opacity: 0 }}>
           <a
             href="mailto:nosk@naskaus.com"
             className="mt-2 px-6 py-3 rounded-lg font-body text-sm font-semibold tracking-wider uppercase transition-all duration-300 interactive"

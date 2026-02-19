@@ -95,7 +95,7 @@ body {
 /* Hero title — MASSIVE */
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(5rem, 18vw, 14rem);
+  font-size: clamp(2.8rem, 18vw, 14rem);
   letter-spacing: 0.05em;
   line-height: 1;
   color: var(--text-primary);
@@ -104,7 +104,7 @@ body {
 /* Typewriter text */
 .typewriter-text {
   font-family: var(--font-body);
-  font-size: clamp(1.4rem, 3.5vw, 2.8rem);
+  font-size: clamp(1rem, 3.5vw, 2.8rem);
   line-height: 1.6;
   color: var(--text-secondary);
 }
@@ -112,7 +112,7 @@ body {
 /* Section headings */
 .section-heading {
   font-family: var(--font-heading);
-  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-size: clamp(1.75rem, 6vw, 5rem);
   letter-spacing: -0.02em;
 }
 
@@ -246,6 +246,12 @@ body {
   height: 100vh;
   background: rgba(255, 255, 255, 0.1);
   z-index: 9998;
+}
+
+@media (max-width: 768px) {
+  .scroll-progress {
+    display: none;
+  }
 }
 
 .scroll-progress-bar {
@@ -410,7 +416,7 @@ body {
 
 .section-title-cinematic {
   font-family: var(--font-display);
-  font-size: clamp(4rem, 12vw, 10rem);
+  font-size: clamp(2.5rem, 12vw, 10rem);
   letter-spacing: 0.08em;
   line-height: 0.9;
   text-transform: uppercase;
@@ -532,6 +538,13 @@ body {
 }
 
 .ai-tool-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+
+@media (min-width: 768px) {
+  .ai-tool-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  }
 }

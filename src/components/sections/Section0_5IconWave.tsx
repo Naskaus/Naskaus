@@ -107,7 +107,7 @@ export default function Section0_5IconWave() {
   return (
     <section
       id="icon-wave"
-      className="relative w-full h-[80vh] overflow-hidden section-wrapper"
+      className="relative w-full h-[50vh] md:h-[80vh] overflow-hidden section-wrapper"
       style={{
         background: 'linear-gradient(180deg, #080808 0%, #0D0D0D 100%)',
       }}
@@ -116,11 +116,11 @@ export default function Section0_5IconWave() {
       <div className="absolute inset-0 flex items-center py-20">
         <div className="w-full overflow-visible">
           <div
-            className="flex items-center gap-20 animate-marquee-wave"
+            className="flex items-center gap-10 md:gap-20 animate-marquee-wave"
             style={{
               width: 'max-content',
-              paddingTop: '80px',
-              paddingBottom: '80px',
+              paddingTop: '40px',
+              paddingBottom: '40px',
             }}
           >
             {/* Triple the items for seamless loop */}
@@ -152,13 +152,13 @@ export default function Section0_5IconWave() {
 
       {/* Gradient overlays for fade effect */}
       <div
-        className="absolute inset-y-0 left-0 w-40 z-10 pointer-events-none"
+        className="absolute inset-y-0 left-0 w-16 md:w-40 z-10 pointer-events-none"
         style={{
           background: 'linear-gradient(90deg, #080808 0%, transparent 100%)',
         }}
       />
       <div
-        className="absolute inset-y-0 right-0 w-40 z-10 pointer-events-none"
+        className="absolute inset-y-0 right-0 w-16 md:w-40 z-10 pointer-events-none"
         style={{
           background: 'linear-gradient(270deg, #0D0D0D 0%, transparent 100%)',
         }}

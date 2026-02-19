@@ -194,7 +194,7 @@ export default function Section1Lab() {
 
         {/* Card Grid — positioned below title area */}
         <div
-          className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 px-4 md:px-8 w-full max-w-3xl z-10 mt-[22vh]"
+          className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3 md:gap-4 px-4 md:px-8 w-full max-w-3xl z-10 mt-[18vh] md:mt-[22vh]"
           style={{ perspective: '1200px' }}
         >
           {LAB_APPS.map((app, index) => (

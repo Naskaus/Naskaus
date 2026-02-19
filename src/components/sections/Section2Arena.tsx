@@ -178,7 +178,7 @@ export default function Section2Arena() {
 
         <div
           ref={mainCardRef}
-          className="relative dark-glass rounded-2xl p-6 md:p-8 w-full max-w-lg scanlines"
+          className="relative dark-glass rounded-2xl p-4 md:p-6 lg:p-8 w-full max-w-lg scanlines"
           style={{
             border: '1px solid rgba(0,212,255,0.3)',
             boxShadow: '0 0 30px rgba(0,212,255,0.15), 0 0 60px rgba(0,212,255,0.05)',

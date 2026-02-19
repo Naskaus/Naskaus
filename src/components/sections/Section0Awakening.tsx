@@ -35,9 +35,11 @@ export default function Section0Awakening({ onAnimationComplete }: Section0Awake
 
   // Generate random positions once on mount for deterministic letter animation
   const letterPositions = useMemo(() => {
+    // Scale scatter distance for mobile (100vw on 320px = tiny, so cap at 80)
+    const spread = typeof window !== 'undefined' ? Math.min(200, window.innerWidth * 0.25) : 200;
     return 'NASKAUS.'.split('').map(() => ({
-      x: (Math.random() - 0.5) * 200,
-      y: (Math.random() - 0.5) * 200,
+      x: (Math.random() - 0.5) * spread,
+      y: (Math.random() - 0.5) * spread,
       r: (Math.random() - 0.5) * 360,
     }));
   }, []);
@@ -169,7 +171,7 @@ export default function Section0Awakening({ onAnimationComplete }: Section0Awake
 
         {/* Scroll Down Indicator */}
         <div
-          className={`absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 transition-all duration-700 ${
+          className={`absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 transition-all duration-700 ${
             showScrollIndicator ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >

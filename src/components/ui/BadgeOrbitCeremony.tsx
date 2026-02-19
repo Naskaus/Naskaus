@@ -33,13 +33,22 @@ const BadgeOrbitCeremony = forwardRef<BadgeOrbitHandle>(function BadgeOrbitCerem
     const badges = badgeRefs.current.filter(Boolean) as HTMLDivElement[];
     if (badges.length === 0) return;
 
+    // Responsive scaling
+    const vScale = Math.min(1, window.innerWidth / 768);
+    const baseRadius = 80 * vScale;
+    const radiusStep = 20 * vScale;
+    const scatterX = 350 * vScale;
+    const scatterY = 200 * vScale;
+    const scatterOutX = 400 * vScale;
+    const scatterOutY = 250 * vScale;
+
     // Initial: hidden, scattered at edges
     badges.forEach((badge, i) => {
       const angle = (i / badges.length) * Math.PI * 2;
       gsap.set(badge, {
         opacity: 0,
-        x: Math.cos(angle) * 350,
-        y: Math.sin(angle) * 200,
+        x: Math.cos(angle) * scatterX,
+        y: Math.sin(angle) * scatterY,
         scale: 0.3,
       });
     });
@@ -49,7 +58,7 @@ const BadgeOrbitCeremony = forwardRef<BadgeOrbitHandle>(function BadgeOrbitCerem
     // Phase 1: Gather (0–1.5s) — badges fly from edges to orbit positions
     badges.forEach((badge, i) => {
       const startAngle = (i / badges.length) * Math.PI * 2;
-      const radius = 80 + (i % 3) * 20; // 80–120px (inside section cards at 140–200)
+      const radius = baseRadius + (i % 3) * radiusStep;
       tl.to(badge, {
         opacity: 1,
         x: Math.cos(startAngle) * radius,
@@ -64,7 +73,7 @@ const BadgeOrbitCeremony = forwardRef<BadgeOrbitHandle>(function BadgeOrbitCerem
     tl.call(() => {
       const tweens: gsap.core.Tween[] = [];
       badges.forEach((badge, i) => {
-        const radius = 80 + (i % 3) * 20;
+        const radius = baseRadius + (i % 3) * radiusStep;
         const speed = 6 + i * 0.8;
         const startAngle = (i / badges.length) * Math.PI * 2;
         const proxy = { angle: startAngle };
@@ -98,8 +107,8 @@ const BadgeOrbitCeremony = forwardRef<BadgeOrbitHandle>(function BadgeOrbitCerem
     badges.forEach((badge, i) => {
       const angle = (i / badges.length) * Math.PI * 2;
       tl.to(badge, {
-        x: Math.cos(angle) * 400,
-        y: Math.sin(angle) * 250,
+        x: Math.cos(angle) * scatterOutX,
+        y: Math.sin(angle) * scatterOutY,
         opacity: 0,
         scale: 0.2,
         duration: 1.5,

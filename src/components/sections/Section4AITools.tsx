@@ -160,7 +160,7 @@ export default function Section4AITools() {
         </div>
 
         {/* Card grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-4xl mt-[20vh]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4 w-full max-w-4xl mt-[20vh]">
           {AI_TOOLS.map((tool, i) => (
             <div
               key={tool.id}

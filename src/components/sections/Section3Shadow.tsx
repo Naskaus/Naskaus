@@ -226,7 +226,7 @@ export default function Section3Shadow() {
         </div>
 
         {/* Node grid — monochrome icons */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5 w-full max-w-2xl mt-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-5 w-full max-w-2xl mt-8">
           {visibleNodes.map((node, i) => {
             const unlocked = isNodeUnlocked(node.role);
             return (
